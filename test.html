@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ZIM.js Drag and Drop</title>
+    <script src="https://cdn.jsdelivr.net/npm/zimjs@10.7.0/zim.js"></script>
+</head>
+<body>
+<script>
+// Ensure the DOM is loaded before running ZIM code
+window.onload = function() {
+    // Create a new ZIM Frame
+    const frame = new zim.Frame("fit", 1024, 768);
+
+    frame.on("ready", () => {
+        const stage = frame.stage;
+        const stageW = frame.width;
+        const stageH = frame.height;
+
+        // Define correct positions
+        const correctPositions = [
+            {x: 100, y: 100},
+            {x: 300, y: 100},
+            {x: 500, y: 100}
+        ];
+
+        // Function to snap to nearest position
+        function snapToPosition(rect) {
+            let closest = null;
+            let minDist = Infinity;
+
+            correctPositions.forEach(pos => {
+                const dist = zim.dist(rect.x, rect.y, pos.x, pos.y);
+                if (dist < minDist) {
+                    minDist = dist;
+                    closest = pos;
+                }
+            });
+
+            
+        }
+
+        // Create rectangles at random positions
+        const rectangles = [];
+        for (let i = 0; i < correctPositions.length; i++) {
+            const rect = new zim.Rectangle(100, 100, zim.randCol())
+                .center(stage)
+                .pos(zim.rand(50, stageW-150), zim.rand(50, stageH-150))
+                .drag();
+
+            rect.on("pressup", () => snapToPosition(rect));
+
+            rectangles.push(rect);
+        }
+
+        stage.update();
+    });
+}
+</script>
+</body>
+</html>
